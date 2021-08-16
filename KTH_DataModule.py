@@ -52,7 +52,8 @@ class KTH_Dataset(Dataset):
                 try:
                     vid.set(1, frame_num)
                     ret, frame = vid.read()
-                    frames.append(frame)
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    frames.append([frame])
                 except:
                     print(data_item)
                     print(frame_num)
@@ -83,10 +84,10 @@ class KTH_DataModule(pl.LightningDataModule):
             self.__subset_datasets[partition_name] = Subset(self.__complt_dataset, partition_indexes)
     
     def train_dataloader(self):
-        return DataLoader(self.__subset_datasets['Train'] , shuffle=True)
+        return DataLoader(self.__subset_datasets['Train'] , batch_size=16, shuffle=True)
         
     def val_dataloader(self):
-        return DataLoader(self.__subset_datasets['Valid'] , shuffle=False)
+        return DataLoader(self.__subset_datasets['Valid'] , batch_size=16, shuffle=True)
 
     def test_dataloader(self):
-        return DataLoader(self.__subset_datasets['Test'] , shuffle=False)
+        return DataLoader(self.__subset_datasets['Test'] , batch_size=16,shuffle=False)
