@@ -8,14 +8,16 @@ class KTH_Dataset(Dataset):
     
     categories = ["boxing", "handclapping", "handwaving","jogging", "running", "walking"]
 
-    def __init__(self, directory, frames_per_item = 15, transform=None):
+    def __init__(self, directory, frames_per_item = 15, use_preloaded=False, transform=None):
         self.__transform = transform
         self.__directory = directory
+        self.__use_preloaded = use_preloaded
         self.__frames_per_item = frames_per_item
 
     def prepare_data(self):       
         self.__data = self.__parse_sequence_file(self.__directory, self.__frames_per_item)
-        self.__process_video_frames(self.__data, self.__directory + '/data', self.__transform)
+        if not self.__use_preloaded:
+            self.__process_video_frames(self.__data, self.__directory + '/data', self.__transform)
     
     def __len__(self):
         return len(self.__data)
@@ -67,14 +69,14 @@ class KTH_Dataset(Dataset):
 
 class KTH_DataModule(pl.LightningDataModule):
  
-    def __init__(self, directory, frames_per_item = 15, transform=None):
+    def __init__(self, directory, frames_per_item = 15, use_preloaded=False, transform=None):
         super().__init__()
  
         self.__partitions = {'Train': ['11', '12', '13', '14', '15', '16', '17', '18'],
                              'Valid': ['19', '20', '21', '23', '24', '25', '01', '04'],
                              'Test' : ['22', '02', '03', '05', '06', '07', '08', '09', '10']}
 
-        self.__complt_dataset = KTH_Dataset(directory,frames_per_item, transform)
+        self.__complt_dataset = KTH_Dataset(directory,frames_per_item, use_preloaded,transform)
         self.__subset_datasets = {}
 
     def prepare_data(self):

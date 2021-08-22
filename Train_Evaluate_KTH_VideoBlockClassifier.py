@@ -7,10 +7,13 @@ if __name__ == "__main__":
     
     parser = ArgumentParser()
     parser.add_argument("--data_path", type=str, default="/data", dest="data_path")
+    parser.add_argument("--use_cached_data", type=bool, default=FALSE, dest="use_preloaded")
+     
     parser = pl.Trainer.add_argparse_args(parser)
     args = parser.parse_args()
 
-    data_module = KTH_DataModule(args.data_path)
+    data_module = KTH_DataModule(directory=args.data_path, 
+                                 use_preloaded=args.use_preloaded)
 
     # train
     model = KTH_VideoBlockClassifier()
