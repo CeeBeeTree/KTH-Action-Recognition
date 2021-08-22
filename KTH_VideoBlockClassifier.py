@@ -70,4 +70,10 @@ class KTH_VideoBlockClassifier(pl.LightningModule):
         x, y = test_batch
         logits = self.forward(x)
         loss = self.cross_entropy_loss(logits, y)
-        return loss
+        y_pred = torch.argmax(logits, dim=1)
+        accuracy = torch.sum(y == y_pred).item() / (len(y) * 1.0)
+        output = dict({
+            'test_loss': loss,
+            'test_acc': torch.tensor(accuracy),
+        })
+        return output
