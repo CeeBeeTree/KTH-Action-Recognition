@@ -65,3 +65,9 @@ class KTH_VideoBlockClassifier(pl.LightningModule):
         logits = self.forward(x)
         loss = self.cross_entropy_loss(logits, y)
         self.log('val_loss', loss)
+
+    def test_step(self, test_batch, batch_idx):
+        x, y = test_batch
+        logits = self.forward(x)
+        loss = self.cross_entropy_loss(logits, y)
+        return loss
